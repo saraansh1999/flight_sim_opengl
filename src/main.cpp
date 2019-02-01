@@ -39,7 +39,7 @@ void set_camera()
         yscaler = cos(glm::radians(plane.angle_z));
         zscaler = cos(glm::radians(plane.angle_y));
         eye.x = plane.back.x + 500*xscaler;
-        eye.y = plane.back.y + 200*yscaler;
+        eye.y = plane.back.y + 300*yscaler;
         eye.z = plane.back.z + 500*zscaler;
         target.x = plane.front.x - (breadth/2)*xscaler;
         target.y = plane.front.y;
@@ -52,9 +52,9 @@ void set_camera()
         xscaler = sin(glm::radians(plane.angle_y));
         yscaler = 1;
         zscaler = cos(glm::radians(plane.angle_y));
-        eye.x = plane.back.x + 500*xscaler;
-        eye.y = plane.back.y + 1000*yscaler;
-        eye.z = plane.back.z + 500*zscaler;
+        eye.x = plane.back.x + 600*xscaler;
+        eye.y = plane.back.y + 2000*yscaler;
+        eye.z = plane.back.z + 600*zscaler;
         target.x = plane.front.x - (breadth/2)*xscaler;
         target.y = plane.front.y;
         target.z = plane.front.z - (breadth/2)*zscaler;

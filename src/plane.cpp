@@ -4,11 +4,11 @@
 
 Plane::Plane(float x, float y, float z, color_t color){
     this->position = glm::vec3(x, y, z);
-    this->length = 100;
+    this->length = 200;
     this->radius = 20;
     this->tilt_speed = 0;
     this->tilt_accl = 10;
-    this->move_speed = 500;
+    this->move_speed = 0;
     this->move_accl = 100;
     this->ghum_speed = 20;
     this->shift_speed = 0;
@@ -25,7 +25,7 @@ Plane::Plane(float x, float y, float z, color_t color){
     float zval = this->length/2;
     int N = 25;
     float angle = glm::radians(360.0f/N);
-    GLfloat vertex_buffer_data[(N+1)*18];
+    GLfloat vertex_buffer_data[(N+1)*18 + 9*(N+1)];
     for(int i=0;i<N;i++)
     {
         vertex_buffer_data[18*i + 0] = xval;
@@ -57,6 +57,7 @@ Plane::Plane(float x, float y, float z, color_t color){
         vertex_buffer_data[18*i + 16] = yval;
         vertex_buffer_data[18*i + 17] = -zval;
     }
+
     vertex_buffer_data[18*N - 1 + 1] = this->radius;
     vertex_buffer_data[18*N - 1 + 2] = this->position.y;
     vertex_buffer_data[18*N - 1 + 3] = this->position.z - this->length/5;
@@ -75,7 +76,41 @@ Plane::Plane(float x, float y, float z, color_t color){
     vertex_buffer_data[18*N - 1 + 16] = -this->radius - this->length/3;
     vertex_buffer_data[18*N - 1 + 17] = this->position.y;
     vertex_buffer_data[18*N - 1 + 18] = this->position.z + this->length/5;
-    this->object = create3DObject(GL_TRIANGLES, N*6 + 2*3, vertex_buffer_data, color, GL_FILL);
+    
+    xval = this->position.x;
+    yval = this->position.y + this->radius;
+    zval = this->position.z - this->length/2;
+    for(int i=0;i<N;i++)
+    {
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 1] = this->position.x;
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 2] = this->position.y;
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 3] =  -this->position.z - this->length;
+
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 4] = xval;
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 5] = yval;
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 6] = zval;
+
+        newxval = xval*cos(angle) - yval*sin(angle);
+        newyval = xval*sin(angle) + yval*cos(angle);
+        xval = newxval;
+        yval = newyval;
+
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 7] = xval;
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 8] = yval;
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 9] = zval;
+    }
+
+    vertex_buffer_data[27*N + 18 - 1 + 1] = this->position.x;
+    vertex_buffer_data[27*N + 18 - 1 + 2] = this->position.y + this->radius;
+    vertex_buffer_data[27*N + 18 - 1 + 3] = this->position.z + this->length/4;
+    vertex_buffer_data[27*N + 18 - 1 + 4] = this->position.x;
+    vertex_buffer_data[27*N + 18 - 1 + 5] = this->position.y + this->radius;
+    vertex_buffer_data[27*N + 18 - 1 + 6] = this->position.z + this->length/2;
+    vertex_buffer_data[27*N + 18 - 1 + 7] = this->position.x;
+    vertex_buffer_data[27*N + 18 - 1 + 8] = this->position.y + this->radius + this->radius*3;
+    vertex_buffer_data[27*N + 18 - 1 + 9] = this->position.z + this->length/2;
+
+    this->object = create3DObject(GL_TRIANGLES, N*6 + 3*3 + N*3, vertex_buffer_data, color, GL_FILL);
 }
 
 void Plane::draw(glm::mat4 VP) {
@@ -144,10 +179,10 @@ void Plane::set_position(float x, float y, float z) {
 void Plane::tick() {
     // this->position.x -= speed;
     // this->position.y -= speed;
-    this->back.x = this->position.x + (this->length/2)*sin(glm::radians(this->angle_y));
+    this->back.x = this->position.x + (3*this->length/2)*sin(glm::radians(this->angle_y));
     this->back.y = this->position.y;
-    this->back.z = this->position.z + (this->length/2)*cos(glm::radians(this->angle_y));
-    this->front.x = this->position.x - (this->length/2)*sin(glm::radians(this->angle_y));
+    this->back.z = this->position.z + (3*this->length/2)*cos(glm::radians(this->angle_y));
+    this->front.x = this->position.x - (3*this->length/2)*sin(glm::radians(this->angle_y));
     this->front.y = this->position.y;
-    this->front.z = this->position.z - (this->length/2)*cos(glm::radians(this->angle_y));
+    this->front.z = this->position.z - (3*this->length/2)*cos(glm::radians(this->angle_y));
 }
