@@ -1,6 +1,8 @@
 #include "main.h"
 #include "timer.h"
 #include "plane.h"
+#include "sea.h"
+#include "ground.h"
 #include "ball.h"
 
 using namespace std;
@@ -13,10 +15,12 @@ GLFWwindow *window;
 * Customizable functions *
 **************************/
 
-Ball balls[1000];
+vector<Ground> grounds;
 Plane plane;
+Sea sea;
 
-float world_breadth = 1000000000;
+int no_grounds = 1000;
+float world_breadth = 1000000000, world_height = 1000000000, world_width = 1000000000;
 float xscaler, yscaler, zscaler;
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
@@ -53,7 +57,7 @@ void set_camera()
         yscaler = 1;
         zscaler = cos(glm::radians(plane.angle_y));
         eye.x = plane.back.x + 600*xscaler;
-        eye.y = plane.back.y + 2000*yscaler;
+        eye.y = plane.back.y + 10000*yscaler;
         eye.z = plane.back.z + 600*zscaler;
         target.x = plane.front.x - (breadth/2)*xscaler;
         target.y = plane.front.y;
@@ -107,9 +111,10 @@ void draw() {
     glm::mat4 MVP;  // MVP = Projection * View * Model
 
     // Scene render
-    for(int i=0;i<1000;i++)
-        balls[i].draw(VP);
+    for(int i=0;i<grounds.size();i++)
+        grounds[i].draw(VP);
     plane.draw(VP);
+    sea.draw(VP);
 }
 
 void tick_input(GLFWwindow *window) {
@@ -165,6 +170,9 @@ void tick_input(GLFWwindow *window) {
 void tick_elements() {
     // ball1.tick();
     plane.tick();
+    sea.tick();
+    for(int i=0;i<grounds.size();i++)
+        grounds[i].tick();
 }
 
 /* Initialize the OpenGL rendering properties */
@@ -174,11 +182,12 @@ void initGL(GLFWwindow *window, int width, int height) {
     // Create the models
 
     // ball1       = Ball(0, 0, COLOR_RED);
-    for(int i=0;i<1000;i++)
+    for(int i=0;i<no_grounds;i++)
     {
-        balls[i] = Ball(-10000 + rand()%20000, -1000 + rand()%2000, -30000 + rand()%30000, COLOR_GREEN);
+        grounds.push_back(Ground(-world_width/10000 + rand()%(int)(2*world_width/10000), -2000, -world_breadth/10000 + rand()%(int)(2*world_breadth/10000), COLOR_GREEN));
     }
     plane = Plane(0, 0, 0, COLOR_RED);
+    sea = Sea(0.0f, -2000.0f, 0.0f, COLOR_BLUE);
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -244,5 +253,5 @@ void reset_screen() {
     float bottom = screen_center_y - 4 / screen_zoom;
     float left   = screen_center_x - 4 / screen_zoom;
     float right  = screen_center_x + 4 / screen_zoom;
-    Matrices.projection = glm::perspective(glm::radians(fov), height/width, 0.1f, world_breadth);
+    Matrices.projection = glm::perspective(glm::radians(fov), height/width, 0.1f, world_breadth/4);
 }
