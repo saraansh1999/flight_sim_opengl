@@ -62,12 +62,14 @@ void set_camera()
         target.x = plane.front.x - (breadth/2)*xscaler;
         target.y = plane.front.y;
         target.z = plane.front.z - (breadth/2)*zscaler;
+        up = glm::vec3(0, 1, 0);
         face = eye - target;
     }
     else if(view == 3)
     {
         eye = glm::vec3(0 , 1000, 500);
         target = plane.position;
+        up = glm::vec3(0, 1, 0);
         face = plane.back - plane.front;
     }
     else if(view == 4)
