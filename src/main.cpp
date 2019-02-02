@@ -3,6 +3,8 @@
 #include "plane.h"
 #include "sea.h"
 #include "ground.h"
+#include "speed_indicator.h"
+#include "alt_indicator.h"
 #include "ball.h"
 
 using namespace std;
@@ -18,6 +20,8 @@ GLFWwindow *window;
 vector<Ground> grounds;
 Plane plane;
 Sea sea;
+Speed_ind speed_ind;
+Alt_ind alt_ind;
 
 int no_grounds = 1000;
 float world_breadth = 1000000000, world_height = 1000000000, world_width = 1000000000;
@@ -48,7 +52,7 @@ void set_camera()
         target.x = plane.front.x - (breadth/2)*xscaler;
         target.y = plane.front.y;
         target.z = plane.front.z - (breadth/2)*zscaler;
-        up = glm::vec3(-sin(glm::radians(plane.angle_z)), cos(glm::radians(plane.angle_z)), 0);
+        up = glm::vec3(-sin(glm::radians(plane.angle_z)), cos(glm::radians(plane.angle_z))*cos(glm::radians(plane.angle_x)), -sin(glm::radians(plane.angle_x)));
         face = eye - target;
     }
     else if(view == 2)
@@ -75,13 +79,13 @@ void set_camera()
     else if(view == 4)
     {
         xscaler = sin(glm::radians(plane.angle_y));
-        yscaler = 1;
+        yscaler = sin(glm::radians(plane.angle_x));
         zscaler = cos(glm::radians(plane.angle_y));
         eye = plane.front;
         target.x = plane.front.x - (breadth/2)*xscaler;
-        target.y = plane.front.y;
+        target.y = plane.front.y + (breadth/2)*yscaler;
         target.z = plane.front.z - (breadth/2)*zscaler;
-        up = glm::vec3(-sin(glm::radians(plane.angle_z)), cos(glm::radians(plane.angle_z)), 0);
+        up = glm::vec3(-sin(glm::radians(plane.angle_z)), cos(glm::radians(plane.angle_z))*cos(glm::radians(plane.angle_x)), -sin(glm::radians(plane.angle_x)));
         face = eye - target;
     }
 }
@@ -98,6 +102,7 @@ void draw() {
 
     set_camera();
 
+    //speed_ind.set_mag(glm::length(eye-target));
     // Compute Camera matrix (view)
     Matrices.view = glm::lookAt( eye, target, up ); // Rotating Camera for 3D
     // Don't change unless you are sure!!
@@ -117,6 +122,8 @@ void draw() {
         grounds[i].draw(VP);
     plane.draw(VP);
     sea.draw(VP);
+    speed_ind.draw(Matrices.projection, plane.move_speed);
+    alt_ind.draw(Matrices.projection, plane.position.y);
 }
 
 void tick_input(GLFWwindow *window) {
@@ -129,6 +136,8 @@ void tick_input(GLFWwindow *window) {
     int d = glfwGetKey(window, GLFW_KEY_D);
     int q = glfwGetKey(window, GLFW_KEY_Q);
     int e = glfwGetKey(window, GLFW_KEY_E);
+    int up = glfwGetKey(window, GLFW_KEY_UP);
+    int down = glfwGetKey(window, GLFW_KEY_DOWN);
     
     if (f_cam) {
         view = 1;
@@ -167,10 +176,21 @@ void tick_input(GLFWwindow *window) {
     else{
         plane.ghum(0);
     }
+    if(up){
+        plane.rise(1);
+    }
+    else if(down){
+        plane.rise(-1);
+    }
+    else{
+        plane.rise(0);
+    }
 }
 
 void tick_elements() {
     // ball1.tick();
+    if(plane.position.y < -2000.0f)
+        quit(window);
     plane.tick();
     sea.tick();
     for(int i=0;i<grounds.size();i++)
@@ -190,7 +210,10 @@ void initGL(GLFWwindow *window, int width, int height) {
     }
     plane = Plane(0, 0, 0, COLOR_RED);
     sea = Sea(0.0f, -2000.0f, 0.0f, COLOR_BLUE);
-
+    speed_ind = Speed_ind(0, 0, 0, COLOR_RED);
+    speed_ind.set_position(-250, -350, -1000);
+    alt_ind = Alt_ind(0, 0, 0, COLOR_RED);
+    alt_ind.set_position(250, -350, -1000);
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
     // Get a handle for our "MVP" uniform

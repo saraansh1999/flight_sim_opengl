@@ -7,13 +7,17 @@ Plane::Plane(float x, float y, float z, color_t color){
     this->length = 200;
     this->radius = 20;
     this->tilt_speed = 0;
-    this->tilt_accl = 10;
+    this->tilt_accl = 5;
+    this->ver_speed = 0;
+    this->ver_accl = 100;
     this->move_speed = 0;
-    this->move_accl = 100;
+    this->move_accl = 500;
     this->ghum_speed = 20;
     this->shift_speed = 0;
-    this->shift_accl = 10;
-    this->rise_speed = 30;
+    this->shift_accl = 5;
+    this->rise_speed = 5;
+    this->g_accl = 10;
+    this->g_speed = 0;
     this->rotation_y=glm::mat4(1.0f);
     this->rotation_z=glm::mat4(1.0f);
     this->rotation_x=glm::mat4(1.0f);
@@ -130,21 +134,31 @@ void Plane::move_z(float xdir, float zdir, int dir)
     this->position -= glm::normalize(glm::vec3(xdir, 0, zdir))*this->move_speed*delta_time;
     if(dir == 1 && this->move_speed<2000)    
         this->move_speed += this->move_accl*delta_time;
-    else if(dir == -1 && this->move_speed>500)
-        this->move_speed -= 3*this->move_accl*delta_time;
+    else if(dir == -1)
+    {
+        if(this->move_speed>0)
+            this->move_speed -= this->move_accl*delta_time;
+        else
+            this->move_speed = 0;
+    }
 }
 
 void Plane::tilt(int dir, float &speed, float accl)
 {
     this->angle_y += speed*delta_time;
-    if(dir == 1 && speed<50)
+    if(dir == 1 && speed<30)
         speed += accl*delta_time;
-    else if(dir == -1 && speed > -50)
+    else if(dir == -1 && speed > -30)
         speed -= accl*delta_time;
-    else if(dir == 0 && speed>0)
-        speed -= 5*accl*delta_time;
-    else if(dir == 0 && speed<0)
-        speed += 5*accl*delta_time;
+    else if(dir == 0)
+    {
+        if(speed>1)
+            speed -= 3*accl*delta_time;
+        else if(speed<-1)
+            speed += 3*accl*delta_time;
+        else
+            speed = 0;
+    }
     this->rotation_y = glm::rotate(glm::radians(this->angle_y), glm::vec3(0, 1, 0));
 }
 
@@ -169,7 +183,39 @@ void Plane::ghum(int dir)
 
 void Plane::rise(int dir)
 {
-    this->angle_x += dir*this->rise_speed*delta_time;
+    this->position.y += this->ver_speed*delta_time;
+    if(dir == 1)
+    {
+        this->g_speed = 0;
+        if(this->angle_x<15)
+            this->angle_x += 2*this->rise_speed*delta_time;
+        if(this->ver_speed<500)
+            this->ver_speed += this->ver_accl*delta_time;
+    }
+    else if(dir == -1)
+    {
+        if(this->angle_x>-15)
+            this->angle_x -= this->rise_speed*delta_time;
+        if(this->ver_speed>-500)
+            this->ver_speed -= this->ver_accl*delta_time;
+    }
+    else if(dir == 0)
+    {
+        // if(this->angle_x>0.1)
+        //     this->angle_x -= this->rise_speed*delta_time;
+        // else if(this->angle_x<-0.1)
+        //     this->angle_x += this->rise_speed*delta_time;
+        // else
+        //     this->angle_x = 0;
+
+        if(this->ver_speed>1)
+            this->ver_speed -= this->ver_accl*delta_time;
+        else if(this->ver_speed<-1)
+            this->ver_speed += this->ver_accl*delta_time;
+        else
+            this->ver_speed = 0;
+        
+    }
     this->rotation_z = glm::rotate(glm::radians(this->angle_x), glm::vec3(1, 0, 0));
 }
 
@@ -179,10 +225,16 @@ void Plane::set_position(float x, float y, float z) {
 void Plane::tick() {
     // this->position.x -= speed;
     // this->position.y -= speed;
+    this->position.y -= this->g_speed*delta_time;
+    this->g_speed += this->g_accl*delta_time;
+    if(this->angle_x>-15)
+    {
+        this->angle_x -= this->rise_speed/2*delta_time;
+    }
     this->back.x = this->position.x + (3*this->length/2)*sin(glm::radians(this->angle_y));
-    this->back.y = this->position.y;
+    this->back.y = this->position.y - (3*this->length/2)*sin(glm::radians(this->angle_x));
     this->back.z = this->position.z + (3*this->length/2)*cos(glm::radians(this->angle_y));
     this->front.x = this->position.x - (3*this->length/2)*sin(glm::radians(this->angle_y));
-    this->front.y = this->position.y;
+    this->front.y = this->position.y + (3*this->length/2)*sin(glm::radians(this->angle_x));
     this->front.z = this->position.z - (3*this->length/2)*cos(glm::radians(this->angle_y));
 }
