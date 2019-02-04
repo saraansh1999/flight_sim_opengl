@@ -5,6 +5,7 @@
 Plane::Plane(float x, float y, float z, color_t color){
     this->position = glm::vec3(x, y, z);
     this->length = 200;
+    this->fuel = 100;
     this->radius = 20;
     this->tilt_speed = 0;
     this->tilt_accl = 5;
@@ -81,14 +82,14 @@ Plane::Plane(float x, float y, float z, color_t color){
     vertex_buffer_data[18*N - 1 + 17] = this->position.y;
     vertex_buffer_data[18*N - 1 + 18] = this->position.z + this->length/5;
     
-    xval = this->position.x;
-    yval = this->position.y + this->radius;
-    zval = this->position.z - this->length/2;
+    xval = 0;
+    yval = 0 + this->radius;
+    zval = 0 - this->length/2;
     for(int i=0;i<N;i++)
     {
-        vertex_buffer_data[18*(N+1) - 1 + 9*i + 1] = this->position.x;
-        vertex_buffer_data[18*(N+1) - 1 + 9*i + 2] = this->position.y;
-        vertex_buffer_data[18*(N+1) - 1 + 9*i + 3] =  -this->position.z - this->length;
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 1] = 0;
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 2] = 0;
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 3] = 0 - this->length;
 
         vertex_buffer_data[18*(N+1) - 1 + 9*i + 4] = xval;
         vertex_buffer_data[18*(N+1) - 1 + 9*i + 5] = yval;
@@ -123,7 +124,10 @@ void Plane::draw(glm::mat4 VP) {
     //glm::mat4 rotate    = glm::rotate((float) (this->rotation * M_PI / 180.0f), glm::vec3(1, 0, 0));
     // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
     // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
-    Matrices.model *= (translate * this->rotation_y * this->rotation_z * this->rotation_x);
+    this->rotation_x = glm::rotate(glm::radians(this->angle_x), glm::vec3(1, 0, 0));
+    this->rotation_y = glm::rotate(glm::radians(this->angle_y), glm::vec3(0, 1, 0));
+    this->rotation_z = glm::rotate(glm::radians(this->angle_z), glm::vec3(0, 0, 1));
+    Matrices.model *= (translate * this->rotation_y * this->rotation_x * this->rotation_z);
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
     draw3DObject(this->object);
@@ -159,7 +163,6 @@ void Plane::tilt(int dir, float &speed, float accl)
         else
             speed = 0;
     }
-    this->rotation_y = glm::rotate(glm::radians(this->angle_y), glm::vec3(0, 1, 0));
 }
 
 void Plane::ghum(int dir)
@@ -177,7 +180,6 @@ void Plane::ghum(int dir)
         else
             this->angle_z = 0;
     }
-    this->rotation_z = glm::rotate(glm::radians(this->angle_z), glm::vec3(0, 0, 1));
     this->tilt(dir, this->shift_speed, this->shift_accl);
 }
 
@@ -216,7 +218,6 @@ void Plane::rise(int dir)
             this->ver_speed = 0;
         
     }
-    this->rotation_z = glm::rotate(glm::radians(this->angle_x), glm::vec3(1, 0, 0));
 }
 
 void Plane::set_position(float x, float y, float z) {
@@ -237,4 +238,5 @@ void Plane::tick() {
     this->front.x = this->position.x - (3*this->length/2)*sin(glm::radians(this->angle_y));
     this->front.y = this->position.y + (3*this->length/2)*sin(glm::radians(this->angle_x));
     this->front.z = this->position.z - (3*this->length/2)*cos(glm::radians(this->angle_y));
+    this->fuel -= delta_time;
 }
