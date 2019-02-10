@@ -2,12 +2,13 @@
 #include <GLFW/glfw3.h>
 
 Timer::Timer(double interval) {
-    prev = 0;
+    prev = glfwGetTime();
+    cur = glfwGetTime();
     this->interval = interval;
 }
 
 bool Timer::processTick() {
-    double cur = glfwGetTime();
+    cur = glfwGetTime();
     if (cur - prev >= interval) {
         prev = cur;
         return true;

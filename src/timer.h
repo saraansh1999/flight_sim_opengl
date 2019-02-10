@@ -11,7 +11,7 @@ public:
     double interval;
     bool processTick();
 private:
-    double prev;
+    double prev, cur;
 };
 
 #endif // TIMER_H

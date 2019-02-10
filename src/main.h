@@ -5,6 +5,7 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
+#include<map>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -65,15 +66,24 @@ extern GLMatrices Matrices;
 enum direction_t { DIR_UP, DIR_RIGHT, DIR_DOWN, DIR_LEFT };
 
 struct bounding_box_t {
-    float x;
-    float y;
+    glm::vec3 pos;
     float width;
     float height;
+    float breadth;
 };
 
-bool detect_collision(bounding_box_t a, bounding_box_t b);
+struct bounding_box_plane {
+    glm::vec3 pos;
+    float width;
+    float height;
+    float breadth;
+    glm::vec3 front;
+    glm::vec3 back;
+};
 
-extern float screen_zoom, screen_center_x, screen_center_y, height, width, breadth, fov, delta_time, world_breadth, world_height, world_width;
+//bool detect_collision(bounding_box_t a, bounding_box_t b);
+
+extern float screen_zoom, screen_center_x, screen_center_y, height, width, breadth, fov, delta_time, world_breadth, world_height_above, world_height_below, world_width;
 void reset_screen();
 
 // ---- Colors ----

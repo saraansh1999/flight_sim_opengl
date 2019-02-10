@@ -1,50 +1,101 @@
 #include "ground.h"
-#include "main.h"
+#include "main.h"   
 
 Ground::Ground(float x, float y, float z, color_t color) {
     this->position = glm::vec3(x, y, z);
+    this->lives = 3;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
     static const GLfloat vertex_buffer_data[] = {
-        -300.0f,-20.0f,-300.0f, // triangle 1 : begin
-        -300.0f,-20.0f, 300.0f,
-        -300.0f, 20.0f, 300.0f, // triangle 1 : end
-        300.0f, 20.0f,-300.0f, // triangle 2 : begin
-        -300.0f,-20.0f,-300.0f,
-        -300.0f, 20.0f,-300.0f, // triangle 2 : end
-        300.0f,-20.0f, 300.0f,
-        -300.0f,-20.0f,-300.0f,
-        300.0f,-20.0f,-300.0f,
-        300.0f, 20.0f,-300.0f,
-        300.0f,-20.0f,-300.0f,
-        -300.0f,-20.0f,-300.0f,
-        -300.0f,-20.0f,-300.0f,
-        -300.0f, 20.0f, 300.0f,
-        -300.0f, 20.0f,-300.0f,
-        300.0f,-20.0f, 300.0f,
-        -300.0f,-20.0f, 300.0f,
-        -300.0f,-20.0f,-300.0f,
-        -300.0f, 20.0f, 300.0f,
-        -300.0f,-20.0f, 300.0f,
-        300.0f,-20.0f, 300.0f,
-        300.0f, 20.0f, 300.0f,
-        300.0f,-20.0f,-300.0f,
-        300.0f, 20.0f,-300.0f,
-        300.0f,-20.0f,-300.0f,
-        300.0f, 20.0f, 300.0f,
-        300.0f,-20.0f, 300.0f,
-        300.0f, 20.0f, 300.0f,
-        300.0f, 20.0f,-300.0f,
-        -300.0f, 20.0f,-300.0f,
-        300.0f, 20.0f, 300.0f,
-        -300.0f, 20.0f,-300.0f,
-        -300.0f, 20.0f, 300.0f,
-        300.0f, 20.0f, 300.0f,
-        -300.0f, 20.0f, 300.0f,
-        300.0f,-20.0f, 300.0f
-    };
+        -300, -250, -300,
+        -300, -250, 300,
+        300, -250, 300,
+        300, -250 , 300,
+        -300, -250, -300,
+        300, -250, -300,
 
-    this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
+        -300, -200, -300,
+        -300, -200, 300,
+        300, -200, 300,
+        300, -200 , 300,
+        -300, -200, -300,
+        300, -200, -300,
+
+        -300, -250, -300, 
+        -300, -200, -300,
+        -300, -250, 300,
+        -300, -250, 300,
+        -300, -200, 300,
+        -300, -200, -300,
+
+        300, -250, -300, 
+        300, -200, -300,
+        300, -250, 300,
+        300, -250, 300,
+        300, -200, 300,
+        300, -200, -300,
+
+        -300, -250, 300,
+        300, -250, 300,
+        300, -200, 300,
+        -300, -250, 300,
+        -300, -200, 300,
+        300, -200, 300,
+
+        -300, -250, -300,
+        300, -250, -300,
+        300, -200, -300,
+        -300, -250, -300,
+        -300, -200, -300,
+        300, -200, -300,
+
+        -50, 0, -50,
+        -50, 0, 50,
+        50, 0, 50,
+        50, 0 , 50,
+        -50, 0, -50,
+        50, 0, -50,
+
+        -50, 250, -50,
+        -50, 250, 50,
+        50, 250, 50,
+        50, 250 , 50,
+        -50, 250, -50,
+        50, 250, -50,
+
+        -50, -250, -50, 
+        -50, 250, -50,
+        -50, -250, 50,
+        -50, -250, 50,
+        -50, 250, 50,
+        -50, 250, -50,
+
+        50, -250, -50, 
+        50, 250, -50,
+        50, -250, 50,
+        50, -250, 50,
+        50, 250, 50,
+        50, 250, -50,
+
+        -50, -250, 50,
+        50, -250, 50,
+        50, 250, 50,
+        -50, -250, 50,
+        -50, 250, 50,
+        50, 250, 50,
+
+        -50, -250, -50,
+        50, -250, -50,
+        50, 250, -50,
+        -50, -250, -50,
+        -50, 250, -50,
+        50, 250, -50,
+
+    };
+    this->box.width = this->box.breadth = 100;
+    this->box.height = 500;
+    this->box.pos = position;
+    this->object = create3DObject(GL_TRIANGLES, 12*3*2, vertex_buffer_data, color, GL_FILL);
 }
 
 void Ground::draw(glm::mat4 VP) {
@@ -62,6 +113,19 @@ void Ground::draw(glm::mat4 VP) {
 
 void Ground::set_position(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
+}
+
+Missile Ground::create_missile(glm::vec3 plane)
+{
+    return Missile(this->position.x, this->position.y + (0 + rand()%3)*20, this->position.z, glm::vec3(plane - this->position), 1, COLOR_BLACK);
+}        
+
+int Ground::hit()
+{
+    this->lives--;
+    if(this->lives == 0)
+        return 1;
+    return 0;
 }
 
 void Ground::tick() {

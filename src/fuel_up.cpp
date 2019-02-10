@@ -50,6 +50,10 @@ Fuel_up::Fuel_up(float x, float y, float z, color_t color) {
     };
 
     this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
+    this->box.pos = glm::vec3(x, y, z);
+    this->box.width = 100;
+    this->box.height = 100;
+    this->box.breadth = 10;
 }
 
 void Fuel_up::draw(glm::mat4 VP) {

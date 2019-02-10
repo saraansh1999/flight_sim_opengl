@@ -31,6 +31,7 @@ Plane::Plane(float x, float y, float z, color_t color){
     int N = 25;
     float angle = glm::radians(360.0f/N);
     GLfloat vertex_buffer_data[(N+1)*18 + 9*(N+1)];
+    //cylinder
     for(int i=0;i<N;i++)
     {
         vertex_buffer_data[18*i + 0] = xval;
@@ -39,7 +40,7 @@ Plane::Plane(float x, float y, float z, color_t color){
 
         vertex_buffer_data[18*i + 3] = xval;
         vertex_buffer_data[18*i + 4] = yval;
-        vertex_buffer_data[18*i + 5] = -zval;
+        vertex_buffer_data[18*i + 5] = 0;
 
         newxval = xval*cos(angle) - yval*sin(angle);
         newyval = xval*sin(angle) + yval*cos(angle);
@@ -60,12 +61,12 @@ Plane::Plane(float x, float y, float z, color_t color){
 
         vertex_buffer_data[18*i + 15] = xval;
         vertex_buffer_data[18*i + 16] = yval;
-        vertex_buffer_data[18*i + 17] = -zval;
+        vertex_buffer_data[18*i + 17] = 0;
     }
-
+    //wings
     vertex_buffer_data[18*N - 1 + 1] = this->radius;
     vertex_buffer_data[18*N - 1 + 2] = this->position.y;
-    vertex_buffer_data[18*N - 1 + 3] = this->position.z - this->length/5;
+    vertex_buffer_data[18*N - 1 + 3] = this->position.z;
     vertex_buffer_data[18*N - 1 + 4] = this->radius;
     vertex_buffer_data[18*N - 1 + 5] = this->position.y;
     vertex_buffer_data[18*N - 1 + 6] = this->position.z + this->length/5;
@@ -74,7 +75,7 @@ Plane::Plane(float x, float y, float z, color_t color){
     vertex_buffer_data[18*N - 1 + 9] = this->position.z + this->length/5;
     vertex_buffer_data[18*N - 1 + 10] = -this->radius;
     vertex_buffer_data[18*N - 1 + 11] = this->position.y;
-    vertex_buffer_data[18*N - 1 + 12] = this->position.z - this->length/5;
+    vertex_buffer_data[18*N - 1 + 12] = this->position.z;
     vertex_buffer_data[18*N - 1 + 13] = -this->radius;
     vertex_buffer_data[18*N - 1 + 14] = this->position.y;
     vertex_buffer_data[18*N - 1 + 15] = this->position.z + this->length/5;
@@ -84,12 +85,13 @@ Plane::Plane(float x, float y, float z, color_t color){
     
     xval = 0;
     yval = 0 + this->radius;
-    zval = 0 - this->length/2;
+    zval = 0 ;
+    //cone
     for(int i=0;i<N;i++)
     {
         vertex_buffer_data[18*(N+1) - 1 + 9*i + 1] = 0;
         vertex_buffer_data[18*(N+1) - 1 + 9*i + 2] = 0;
-        vertex_buffer_data[18*(N+1) - 1 + 9*i + 3] = 0 - this->length;
+        vertex_buffer_data[18*(N+1) - 1 + 9*i + 3] = 0 - this->length/2;
 
         vertex_buffer_data[18*(N+1) - 1 + 9*i + 4] = xval;
         vertex_buffer_data[18*(N+1) - 1 + 9*i + 5] = yval;
@@ -104,7 +106,7 @@ Plane::Plane(float x, float y, float z, color_t color){
         vertex_buffer_data[18*(N+1) - 1 + 9*i + 8] = yval;
         vertex_buffer_data[18*(N+1) - 1 + 9*i + 9] = zval;
     }
-
+    //back wing
     vertex_buffer_data[27*N + 18 - 1 + 1] = this->position.x;
     vertex_buffer_data[27*N + 18 - 1 + 2] = this->position.y + this->radius;
     vertex_buffer_data[27*N + 18 - 1 + 3] = this->position.z + this->length/4;
@@ -116,6 +118,9 @@ Plane::Plane(float x, float y, float z, color_t color){
     vertex_buffer_data[27*N + 18 - 1 + 9] = this->position.z + this->length/2;
 
     this->object = create3DObject(GL_TRIANGLES, N*6 + 3*3 + N*3, vertex_buffer_data, color, GL_FILL);
+    this->box.width = 2*radius;
+    this->box.height = 2*radius;
+    this->box.breadth = this->length;
 }
 
 void Plane::draw(glm::mat4 VP) {
@@ -189,14 +194,14 @@ void Plane::rise(int dir)
     if(dir == 1)
     {
         this->g_speed = 0;
-        if(this->angle_x<15)
+        if(this->angle_x<30)
             this->angle_x += 2*this->rise_speed*delta_time;
         if(this->ver_speed<500)
             this->ver_speed += this->ver_accl*delta_time;
     }
     else if(dir == -1)
     {
-        if(this->angle_x>-15)
+        if(this->angle_x>-30)
             this->angle_x -= this->rise_speed*delta_time;
         if(this->ver_speed>-500)
             this->ver_speed -= this->ver_accl*delta_time;
@@ -223,6 +228,13 @@ void Plane::rise(int dir)
 void Plane::set_position(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
 }
+
+void Plane::update_fuel(){
+    this->fuel += 30;
+    if(this->fuel>100)
+        this->fuel = 100;
+}
+
 void Plane::tick() {
     // this->position.x -= speed;
     // this->position.y -= speed;
@@ -232,11 +244,14 @@ void Plane::tick() {
     {
         this->angle_x -= this->rise_speed/2*delta_time;
     }
-    this->back.x = this->position.x + (3*this->length/2)*sin(glm::radians(this->angle_y));
-    this->back.y = this->position.y - (3*this->length/2)*sin(glm::radians(this->angle_x));
-    this->back.z = this->position.z + (3*this->length/2)*cos(glm::radians(this->angle_y));
-    this->front.x = this->position.x - (3*this->length/2)*sin(glm::radians(this->angle_y));
-    this->front.y = this->position.y + (3*this->length/2)*sin(glm::radians(this->angle_x));
-    this->front.z = this->position.z - (3*this->length/2)*cos(glm::radians(this->angle_y));
+    this->back.x = this->position.x + (this->length)*sin(glm::radians(this->angle_y));
+    this->back.y = this->position.y - (this->length)*sin(glm::radians(this->angle_x));
+    this->back.z = this->position.z + (this->length)*cos(glm::radians(this->angle_y));
+    this->front.x = this->position.x - (this->length)*sin(glm::radians(this->angle_y));
+    this->front.y = this->position.y + (this->length)*sin(glm::radians(this->angle_x));
+    this->front.z = this->position.z - (this->length)*cos(glm::radians(this->angle_y));
     this->fuel -= delta_time;
+    this->box.pos = this->position;
+    // this->box.front = this->front;
+    // this->box.back = this->back;
 }

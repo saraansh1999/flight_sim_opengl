@@ -1,4 +1,5 @@
 #include "main.h"
+#include "missile.h"
 
 #ifndef GROUND_H
 #define GROUND_H
@@ -12,6 +13,10 @@ public:
     void draw(glm::mat4 VP);
     void set_position(float x, float y, float z);
     void tick();
+    int hit();
+    Missile create_missile(glm::vec3);
+    int lives;
+    bounding_box_t box;
 private:
     VAO *object;
 };
