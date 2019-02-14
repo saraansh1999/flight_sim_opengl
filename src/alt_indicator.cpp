@@ -18,7 +18,7 @@ Alt_ind::Alt_ind(float x, float y, float z, color_t color) {
         vertex_buffer_data_ring[6*i + 0] = this->radius * cos(angle*M_PI/180);
         vertex_buffer_data_ring[6*i + 1] = this->radius * sin(angle*M_PI/180);
         vertex_buffer_data_ring[6*i + 2] = 0.0f;
-        angle += 180/N;
+        angle += 180.0f/N;
         vertex_buffer_data_ring[6*i + 3] = this->radius * cos(angle*M_PI/180);
         vertex_buffer_data_ring[6*i + 4] = this->radius * sin(angle*M_PI/180);
         vertex_buffer_data_ring[6*i + 5] = 0.0f;

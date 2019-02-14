@@ -3,12 +3,17 @@
 #include "plane.h"
 #include "sea.h"
 #include "ground.h"
+#include "volcano.h"
 #include "missile.h"
+#include "bomb.h"
 #include "fuel_up.h"
 #include "marker.h"
+#include "crosshair.h"
+#include "ring.h"
 #include "speed_indicator.h"
 #include "alt_indicator.h"
 #include "fuel_indicator.h"
+#include "gps.h"
 #include "collisions.h"
 #include "ball.h"
 
@@ -24,19 +29,26 @@ GLFWwindow *window;
 
 Collisions_detector detector;
 map<int, Ground> grounds;
+vector<Volcano> volcanoes;
 map<int, Ground>::iterator checkpoint;
 Plane plane;
 Sea sea;
 Marker marker;
+Crosshair crosshair;
 Speed_ind speed_ind;
 Alt_ind alt_ind;
 Fuel_ind fuel_ind;
+Gps gps;
 vector<Missile> missiles;
 vector<Missile> enemy_missiles;
+vector<Bomb> bombs;
 map<int ,Fuel_up> fuel_ups;
+map<int ,Ring> rings;
 
 int no_fuel_ups = 100;
 int no_grounds = 100;
+int no_volcanoes = 20;
+int no_rings = 100;
 float heli_speed = 10000;
 float world_breadth = 1000000000, world_height = 1000000000, world_width = 1000000000;
 float xscaler, yscaler, zscaler;
@@ -53,6 +65,7 @@ double x_mouse = 500, y_mouse=500, mouse_x_angle=0, mouse_y_angle=0, sensitivity
 float curFrame=0, lastFrame=0, delta_time;
 bool start = false;
 Timer missile_timer(0.2);
+Timer bomb_timer(0.2);
 Timer enemy_missile_timer = 3;
 Timer t60(1.0 / 60);
 
@@ -120,14 +133,15 @@ void set_camera()
     }
     else if(view == 4)
     {
+        int dir = -1;
         xscaler = sin(glm::radians(plane.angle_y));
         yscaler = sin(glm::radians(plane.angle_x));
         zscaler = cos(glm::radians(plane.angle_y));
         eye = plane.front;
-        target.x = plane.front.x - (breadth/2)*xscaler;
+        target.x = plane.front.x + (breadth/2)*glm::normalize(plane.front - plane.back).x;
         target.y = plane.front.y + (breadth/2)*yscaler;
-        target.z = plane.front.z - (breadth/2)*zscaler;
-        up = glm::vec3(-sin(glm::radians(plane.angle_z)), cos(glm::radians(plane.angle_z))*cos(glm::radians(plane.angle_x)), -sin(glm::radians(plane.angle_x)));
+        target.z = plane.front.z + (breadth/2)*glm::normalize(plane.front - plane.back).z;
+        up = glm::vec3(-(sin(glm::radians(plane.angle_z)))*cos(glm::radians(-plane.angle_y)), cos(glm::radians(plane.angle_z)),-(sin(glm::radians(plane.angle_z)))*sin(glm::radians(-plane.angle_y)));
         face = eye - target;
     }
     else if(view == 5)
@@ -169,20 +183,27 @@ void draw() {
     // Scene render
     for(map<int, Ground>::iterator i = grounds.begin(); i!=grounds.end(); i++)
         i->second.draw(VP);
+    for(int i=0;i<volcanoes.size();i++)
+        volcanoes[i].draw(VP);
     plane.draw(VP);
     sea.draw(VP);
     marker.draw(VP, plane.position);
+    if(view==4)
+        crosshair.draw(VP);
     for(int i=0;i<missiles.size();i++)
         missiles[i].draw(VP);
     for(int i=0;i<enemy_missiles.size();i++)
-    {
         enemy_missiles[i].draw(VP);
-    }
+    for(int i=0;i<bombs.size();i++)
+        bombs[i].draw(VP);
     for(map<int, Fuel_up>::iterator i = fuel_ups.begin(); i!=fuel_ups.end(); i++)
+        i->second.draw(VP);
+    for(map<int, Ring>::iterator i = rings.begin(); i!=rings.end(); i++)
         i->second.draw(VP);
     speed_ind.draw(Matrices.projection, plane.move_speed);
     alt_ind.draw(Matrices.projection, plane.position.y);
     fuel_ind.draw(Matrices.projection, plane.fuel);
+    gps.draw(Matrices.projection, plane.angle_y, glm::normalize(glm::vec3(checkpoint->second.position.x - plane.position.x, 0, checkpoint->second.position.z - plane.position.z)), glm::normalize(glm::vec3(-face.x, 0, -face.z)));
 }
 
 void tick_input(GLFWwindow *window) {
@@ -199,6 +220,7 @@ void tick_input(GLFWwindow *window) {
     int up = glfwGetKey(window, GLFW_KEY_SPACE);
     int down = glfwGetKey(window, GLFW_KEY_LEFT_ALT);
     int left = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    int right = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
     
     if (f_cam) {
         view = 1;
@@ -255,6 +277,9 @@ void tick_input(GLFWwindow *window) {
     if(left == GLFW_PRESS && missile_timer.processTick()){
         missiles.push_back(Missile(plane.front.x, plane.front.y, plane.front.z, plane.front - plane.back, 20, COLOR_BLACK));
     }
+    if(right == GLFW_PRESS && bomb_timer.processTick()){
+        bombs.push_back(Bomb(plane.position.x, plane.position.y - plane.box.height/2, plane.position.z, COLOR_BLACK));
+    }
 }
 
 void tick_elements() {
@@ -265,6 +290,7 @@ void tick_elements() {
         quit(window);
     plane.tick();
     sea.tick();
+    crosshair.tick(plane.front + glm::normalize(plane.front - plane.back)*200.0f, plane.angle_y, plane.angle_z);
     marker.set_position(checkpoint->second.position.x, checkpoint->second.box.height/2 + checkpoint->second.position.y, checkpoint->second.position.z);
     for(map<int, Ground>::iterator i=grounds.begin(), next=i; i!=grounds.end(); i=next)
     {
@@ -289,6 +315,29 @@ void tick_elements() {
             else
                 j++;
         }
+        for(int j=0;j<bombs.size();)
+        {
+            if(detector.cuboid_cylinder_collision(i->second.box, bombs[j].box) || (bombs[j].position.y <= -2000 && glm::length(glm::vec3(i->second.position.x, 0, i->second.position.z) - glm::vec3(bombs[j].position.x, 0, bombs[j].position.z)) < bombs[j].impact_radius))
+            {
+                bombs.erase(bombs.begin() + j);
+                if(i->second.hit())
+                {
+                    if(i->first == checkpoint->first)
+                        checkpoint++;           //finish game if all over add karna hai 
+                    grounds.erase(i);
+                }
+                break;
+            }
+            else
+                j++;
+        }
+    }
+    for(int i=0;i<volcanoes.size();i++)
+    {
+        if(detector.Ycircular_proximity(glm::vec3(plane.position.x, 0, plane.position.z), glm::vec3(volcanoes[i].position.x, 0, volcanoes[i].position.z), volcanoes[i].radius))
+        {
+            quit(window);
+        }
     }
     for(int i=0;i<missiles.size();)
     {
@@ -303,10 +352,23 @@ void tick_elements() {
     for(int i=0;i<enemy_missiles.size();)
     {
         enemy_missiles[i].tick();
+        if(detector.cuboid_cylinder_collision(enemy_missiles[i].box, plane.box))
+        {
+            enemy_missiles.erase(enemy_missiles.begin() + i);
+            printf("hit\n");
+        }
         if(enemy_missiles[i].ttl.processTick())
         {
             enemy_missiles.erase(enemy_missiles.begin() + i);
         }
+        else
+            i++;
+    }
+    for(int i=0;i<bombs.size();)
+    {
+        bombs[i].tick();
+        if(bombs[i].position.y < -2100)
+            bombs.erase(bombs.begin() + i);
         else
             i++;
     }
@@ -317,6 +379,14 @@ void tick_elements() {
         {
             fuel_ups.erase(i);
             plane.update_fuel();
+        }
+    }
+    for(map<int, Ring>::iterator i=rings.begin(), next=i;i!=rings.end(); i=next)
+    {
+        next++;
+        if(detector.circle2DZ_line_collision(plane.front, plane.back, i->second.position, i->second.radius))
+        {
+            rings.erase(i);
         }
     }
 
@@ -335,9 +405,17 @@ void initGL(GLFWwindow *window, int width, int height) {
         grounds.insert(make_pair(i, Ground(-world_width/100000 + rand()%(int)(2*world_width/100000), -1749, -world_breadth/100000 + rand()%(int)(2*world_breadth/100000), COLOR_GREEN)));
     }
     checkpoint = grounds.begin();
+    for(int i=0;i<no_volcanoes;i++)
+    {
+        volcanoes.push_back(Volcano(-world_width/10000 + rand()%(int)(2*world_width/10000), -1749, -world_breadth/10000 + rand()%(int)(2*world_breadth/10000), COLOR_RED));
+    }
     for(int i=0;i<no_fuel_ups;i++)
     {
         fuel_ups.insert(make_pair(i, Fuel_up(-world_width/100000 + rand()%(int)(2*world_width/100000), rand()%1000, -world_breadth/100000 + rand()%(int)(2*world_breadth/100000), COLOR_BLACK)));
+    }
+    for(int i=0;i<no_rings;i++)
+    {
+        rings.insert(make_pair(i, Ring(-world_width/100000 + rand()%(int)(2*world_width/100000), rand()%1000, -world_breadth/100000 + rand()%(int)(2*world_breadth/100000), COLOR_BLACK)));
     }
     plane = Plane(0, 0, 0, COLOR_RED);
     sea = Sea(0.0f, -2000.0f, 0.0f, COLOR_BLUE);
@@ -346,8 +424,11 @@ void initGL(GLFWwindow *window, int width, int height) {
     alt_ind = Alt_ind(0, 0, 0, COLOR_RED);
     alt_ind.set_position(250, -350, -1000);
     fuel_ind = Fuel_ind(0, 0, 0, COLOR_RED);
-    fuel_ind.set_position(0, 300, -1000);
+    fuel_ind.set_position(250, 300, -1000);
+    gps = Gps(0, 0, 0, COLOR_RED);
+    gps.set_position(-250, 300, -1000);
     marker = Marker(0, 0, 0, COLOR_RED);
+    crosshair = Crosshair(0, 0, 0, COLOR_RED);
     detector = Collisions_detector();
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");

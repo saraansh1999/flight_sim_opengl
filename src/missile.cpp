@@ -4,7 +4,7 @@
 Missile::Missile(float x, float y, float z, glm::vec3 dir, float speed, color_t color) {
     this->position = glm::vec3(x, y, z);
     this->radius = 7;
-    this->ttl = Timer(10);
+    this->ttl = Timer(20);
     this->length = 80;
     this->speed = speed;
     this->direction = dir;

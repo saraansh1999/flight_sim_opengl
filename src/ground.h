@@ -18,7 +18,8 @@ public:
     int lives;
     bounding_box_t box;
 private:
-    VAO *object;
+    VAO *object_ground;
+    VAO *object_shooter;
 };
 
 #endif // GROUND_H

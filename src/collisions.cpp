@@ -6,3 +6,24 @@ bool Collisions_detector::cuboid_cylinder_collision(bounding_box_t obj, bounding
         return true;
     return false;
 }
+
+bool Collisions_detector::circle2DZ_line_collision(glm::vec3 front, glm::vec3 back, glm::vec3 center, float radius)
+{
+    if((front.z > center.z + 5 && back.z < center.z - 5) || (front.z < center.z - 5 && back.z > center.z + 5))
+    {
+        float val = glm::length(glm::cross(front - back, center - back))/glm::length(front - back);
+        if(val <= radius)
+        {
+            return true; 
+        }
+        return false;
+    }
+    return false;
+}
+
+bool Collisions_detector::Ycircular_proximity(glm::vec3 plane, glm::vec3 center, float radius)
+{
+    if(glm::length(plane - center) <= radius)
+        return true;
+    return false;
+}

@@ -1,19 +1,22 @@
-#include "marker.h"
+#include "volcano.h"
 #include "main.h"
 
-Marker::Marker(float x, float y, float z, color_t color) {
+Volcano::Volcano(float x, float y, float z, color_t color) {
     this->position = glm::vec3(x, y, z);
     int N = 25;
-    float length = 100;
+    this->box.height = 500;
+    this->box.width = 500;
+    this->box.breadth = 500;
+    this->radius = 200;
     float angle = glm::radians(360.0f/N);
-    float xval=0, yval=1000, zval = 200, newxval, newzval;
+    float xval=0, yval=-this->box.height/2, zval = this->radius, newxval, newzval;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
     GLfloat vertex_buffer_data[9*N];
     for(int i=0;i<N;i++)
     {
         vertex_buffer_data[9*i + 0] = 0;
-        vertex_buffer_data[9*i + 1] = 0;
+        vertex_buffer_data[9*i + 1] = this->box.height/2;
         vertex_buffer_data[9*i + 2] = 0;
 
         vertex_buffer_data[9*i + 3] = xval;
@@ -30,27 +33,25 @@ Marker::Marker(float x, float y, float z, color_t color) {
         vertex_buffer_data[9*i + 8] = zval;
     }
 
+
+
     this->object = create3DObject(GL_TRIANGLES, N*3, vertex_buffer_data, color, GL_FILL);
 }
 
-void Marker::draw(glm::mat4 VP, glm::vec3 plane) {
+void Volcano::draw(glm::mat4 VP) {
     Matrices.model = glm::mat4(1.0f);
     glm::mat4 translate = glm::translate (this->position);    // glTranslatef
-    glm::mat4 scale = glm::scale(glm::vec3(1,1,1)*glm::length(plane - this->position)/10000.0f);
-    // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
-    // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
-
-    Matrices.model *= (translate*scale);
+    Matrices.model *= (translate);
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
     draw3DObject(this->object);
 }
 
-void Marker::set_position(float x, float y, float z) {
+void Volcano::set_position(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
 }
 
-void Marker::tick() {
+void Volcano::tick() {
     // this->position.x -= speed;
     // this->position.y -= speed;
 }

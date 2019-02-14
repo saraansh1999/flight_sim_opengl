@@ -240,7 +240,7 @@ void Plane::tick() {
     // this->position.y -= speed;
     this->position.y -= this->g_speed*delta_time;
     this->g_speed += this->g_accl*delta_time;
-    if(this->angle_x>-15)
+    if(this->angle_x>-30)
     {
         this->angle_x -= this->rise_speed/2*delta_time;
     }
@@ -252,6 +252,9 @@ void Plane::tick() {
     this->front.z = this->position.z - (this->length)*cos(glm::radians(this->angle_y));
     this->fuel -= delta_time;
     this->box.pos = this->position;
+    this->box.height = this->length*fabs(sin(glm::radians(this->angle_x))) + this->radius*fabs(cos(glm::radians(this->angle_x)));
+    this->box.width = this->length*fabs(sin(glm::radians(this->angle_y))) + this->radius*fabs(cos(glm::radians(this->angle_y)));
+    this->box.breadth = this->length*fabs(cos(glm::radians(this->angle_x)))*fabs(cos(glm::radians(this->angle_y)));
     // this->box.front = this->front;
     // this->box.back = this->back;
 }

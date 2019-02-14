@@ -6,7 +6,7 @@ Ground::Ground(float x, float y, float z, color_t color) {
     this->lives = 3;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-    static const GLfloat vertex_buffer_data[] = {
+    static const GLfloat vertex_buffer_data1[] = {
         -300, -250, -300,
         -300, -250, 300,
         300, -250, 300,
@@ -47,8 +47,9 @@ Ground::Ground(float x, float y, float z, color_t color) {
         300, -200, -300,
         -300, -250, -300,
         -300, -200, -300,
-        300, -200, -300,
-
+        300, -200, -300
+    };
+    static const GLfloat vertex_buffer_data2[] = {
         -50, 0, -50,
         -50, 0, 50,
         50, 0, 50,
@@ -95,7 +96,8 @@ Ground::Ground(float x, float y, float z, color_t color) {
     this->box.width = this->box.breadth = 100;
     this->box.height = 500;
     this->box.pos = position;
-    this->object = create3DObject(GL_TRIANGLES, 12*3*2, vertex_buffer_data, color, GL_FILL);
+    this->object_ground = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data1, COLOR_GREEN, GL_FILL);
+    this->object_shooter = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data2, COLOR_BACKGROUND, GL_FILL);
 }
 
 void Ground::draw(glm::mat4 VP) {
@@ -108,7 +110,8 @@ void Ground::draw(glm::mat4 VP) {
     Matrices.model *= (translate);
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    draw3DObject(this->object);
+    draw3DObject(this->object_ground);
+    draw3DObject(this->object_shooter);
 }
 
 void Ground::set_position(float x, float y, float z) {
@@ -117,7 +120,7 @@ void Ground::set_position(float x, float y, float z) {
 
 Missile Ground::create_missile(glm::vec3 plane)
 {
-    return Missile(this->position.x, this->position.y + (0 + rand()%3)*20, this->position.z, glm::vec3(plane - this->position), 1, COLOR_BLACK);
+    return Missile(this->position.x, this->position.y + (0 + rand()%3)*20, this->position.z, glm::vec3(plane - this->position), 1.0f, COLOR_BLACK);
 }        
 
 int Ground::hit()
