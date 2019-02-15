@@ -6,6 +6,7 @@
 #include "volcano.h"
 #include "missile.h"
 #include "bomb.h"
+#include "parachute.h"
 #include "fuel_up.h"
 #include "marker.h"
 #include "crosshair.h"
@@ -39,6 +40,7 @@ Speed_ind speed_ind;
 Alt_ind alt_ind;
 Fuel_ind fuel_ind;
 Gps gps;
+vector<Parachute> parachutes;
 vector<Missile> missiles;
 vector<Missile> enemy_missiles;
 vector<Bomb> bombs;
@@ -68,6 +70,7 @@ Timer missile_timer(0.2);
 Timer bomb_timer(0.2);
 Timer enemy_missile_timer = 3;
 Timer t60(1.0 / 60);
+Timer parachute_timer(5);
 
 void cursor_callback(GLFWwindow *window, double posx, double posy)
 {
@@ -200,6 +203,8 @@ void draw() {
         i->second.draw(VP);
     for(map<int, Ring>::iterator i = rings.begin(); i!=rings.end(); i++)
         i->second.draw(VP);
+    for(int i=0;i<parachutes.size();i++)
+        parachutes[i].draw(VP);
     speed_ind.draw(Matrices.projection, plane.move_speed);
     alt_ind.draw(Matrices.projection, plane.position.y);
     fuel_ind.draw(Matrices.projection, plane.fuel);
@@ -331,6 +336,10 @@ void tick_elements() {
             else
                 j++;
         }
+        if(detector.cuboid_cylinder_collision(i->second.box, plane.box))
+        {
+            quit(window);
+        }
     }
     for(int i=0;i<volcanoes.size();i++)
     {
@@ -388,6 +397,39 @@ void tick_elements() {
         {
             rings.erase(i);
         }
+    }
+
+    if(parachute_timer.processTick())
+    {
+        int no = rand()%6;
+        for(int i=0;i<no;i++)
+            parachutes.push_back(Parachute(-world_width/100000 + rand()%(int)(2*world_width/100000), 2000.0f, -world_breadth/100000 + rand()%(int)(2*world_breadth/100000)));
+    }
+    for(int i=0;i<parachutes.size();)
+    {
+        int flag=0;
+        parachutes[i].tick();
+        if(parachutes[i].position.y < -2000)
+        {
+            parachutes.erase(parachutes.begin() + i);
+            flag++;   
+        }
+        if(!flag)
+        {
+            for(int j=0;j<missiles.size();)
+            {
+                if(detector.cuboid_cylinder_collision(parachutes[i].box, missiles[j].box))
+                {
+                    missiles.erase(missiles.begin() + j);
+                    parachutes.erase(parachutes.begin() + i);
+                    flag++;
+                }
+                else
+                    j++;
+            }
+        }
+        if(flag==0)
+            i++;
     }
 
 
