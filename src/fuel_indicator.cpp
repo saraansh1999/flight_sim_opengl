@@ -48,7 +48,7 @@ void Fuel_ind::draw(glm::mat4 VP, float fuel) {
 
     Matrices.model = glm::mat4(1.0f);
     translate = glm::translate (this->position);
-    glm::mat4 rotate = glm::rotate(glm::radians((-fuel)*180/100), glm::vec3(0, 0, 1));
+    glm::mat4 rotate = glm::rotate(glm::radians((-fuel)*180/400), glm::vec3(0, 0, 1));
     Matrices.model *= (translate*rotate);
     MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);

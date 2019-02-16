@@ -4,8 +4,10 @@
 
 Plane::Plane(float x, float y, float z, color_t color){
     this->position = glm::vec3(x, y, z);
+    this->lives = 10;
+    this->points = 0;
     this->length = 200;
-    this->fuel = 100;
+    this->fuel = 400;
     this->radius = 20;
     this->tilt_speed = 0;
     this->tilt_accl = 5;
@@ -230,9 +232,9 @@ void Plane::set_position(float x, float y, float z) {
 }
 
 void Plane::update_fuel(){
-    this->fuel += 30;
-    if(this->fuel>100)
-        this->fuel = 100;
+    this->fuel += 100;
+    if(this->fuel>400)
+        this->fuel = 400;
 }
 
 void Plane::tick() {
