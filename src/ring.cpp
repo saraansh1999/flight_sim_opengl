@@ -26,7 +26,7 @@ Ring::Ring(float x, float y, float z) {
 }
 
 void Ring::draw(glm::mat4 VP) {
-    Matrices.model = glm::mat4(100.0f);
+    Matrices.model = glm::mat4(1.0f);
     glm::mat4 translate = glm::translate (this->position);    // glTranslatef
     // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
     // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));

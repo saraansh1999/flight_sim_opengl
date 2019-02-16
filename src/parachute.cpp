@@ -7,8 +7,8 @@ Parachute::Parachute(float x, float y, float z) {
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
     int N = 25;
     float angle = -glm::radians(180.0f/N);
-    this->speed = -150;
-    this->accl = -10;
+    this->speed = -50;
+    this->accl = -5;
     this->length = 100;
     this->radius = 100;
     float xval = -this->radius, newxval;
@@ -104,7 +104,7 @@ Parachute::Parachute(float x, float y, float z) {
 }
 
 void Parachute::draw(glm::mat4 VP) {
-    Matrices.model = glm::mat4(100.0f);
+    Matrices.model = glm::mat4(1.0f);
     glm::mat4 translate = glm::translate (this->position);    // glTranslatef
     // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
     // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
