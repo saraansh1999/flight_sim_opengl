@@ -1,7 +1,7 @@
 #include "ground.h"
 #include "main.h"   
 
-Ground::Ground(float x, float y, float z, color_t color) {
+Ground::Ground(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     this->lives = 3;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
@@ -97,7 +97,7 @@ Ground::Ground(float x, float y, float z, color_t color) {
     this->box.height = 500;
     this->box.pos = position;
     this->object_ground = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data1, COLOR_GREEN, GL_FILL);
-    this->object_shooter = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data2, COLOR_BACKGROUND, GL_FILL);
+    this->object_shooter = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data2, COLOR_LIGHT_PURPLE, GL_FILL);
 }
 
 void Ground::draw(glm::mat4 VP) {
@@ -120,7 +120,7 @@ void Ground::set_position(float x, float y, float z) {
 
 Missile Ground::create_missile(glm::vec3 plane)
 {
-    return Missile(this->position.x, this->position.y + (0 + rand()%3)*20, this->position.z, glm::vec3(plane - this->position), 1.0f, COLOR_BLACK);
+    return Missile(this->position.x, this->position.y + (0 + rand()%3)*20, this->position.z, glm::vec3(plane - this->position), 1.0f);
 }        
 
 int Ground::hit()

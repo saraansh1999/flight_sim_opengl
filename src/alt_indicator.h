@@ -7,7 +7,7 @@
 class Alt_ind {
 public:
     Alt_ind() {}
-    Alt_ind(float x, float y, float z, color_t color);
+    Alt_ind(float x, float y, float z);
     glm::vec3 position;
     float rotation;
     void draw(glm::mat4 VP, float);

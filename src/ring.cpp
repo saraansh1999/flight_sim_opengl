@@ -1,7 +1,7 @@
 #include "ring.h"
 #include "main.h"
 
-Ring::Ring(float x, float y, float z, color_t color) {
+Ring::Ring(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     this->radius = 50;
     int N = 25;
@@ -19,7 +19,7 @@ Ring::Ring(float x, float y, float z, color_t color) {
         vertex_buffer_data[6*i + 4] = this->radius * sin(angle*M_PI/180);
         vertex_buffer_data[6*i + 5] = 0.0f;
     }
-    this->object = create3DObject(GL_LINES, N*2, vertex_buffer_data, color, GL_FILL);
+    this->object = create3DObject(GL_LINES, N*2, vertex_buffer_data, COLOR_BLACK, GL_FILL);
     this->box.pos = glm::vec3(x, y, z);
     this->box.width = this->radius;
     this->box.height = this->radius;

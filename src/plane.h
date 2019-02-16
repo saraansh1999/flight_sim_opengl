@@ -6,7 +6,7 @@
 class Plane {
     public:
         Plane() {}
-        Plane(float x, float y, float z, color_t color);
+        Plane(float x, float y, float z);
         glm::vec3 position, back, front;
         void draw(glm::mat4 VP);
         void set_position(float x, float y, float z);

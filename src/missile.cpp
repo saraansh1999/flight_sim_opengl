@@ -1,7 +1,7 @@
 #include "missile.h"
 #include "main.h"
 
-Missile::Missile(float x, float y, float z, glm::vec3 dir, float speed, color_t color) {
+Missile::Missile(float x, float y, float z, glm::vec3 dir, float speed) {
     this->position = glm::vec3(x, y, z);
     this->radius = 7;
     this->ttl = Timer(20);
@@ -73,7 +73,7 @@ Missile::Missile(float x, float y, float z, glm::vec3 dir, float speed, color_t 
     this->rotation = glm::rotate((float)(acos(glm::dot(glm::vec3(0, 0, 1), glm::normalize(this->direction)))), glm::cross(glm::vec3(0, 0, 1), this->direction));
     this->box.width = this->box.height = 2*radius;
     this->box.breadth = this->length;
-    this->object = create3DObject(GL_TRIANGLES, 6*N + 3*N, vertex_buffer_data, color, GL_FILL);
+    this->object = create3DObject(GL_TRIANGLES, 6*N + 3*N, vertex_buffer_data, COLOR_BLACK, GL_FILL);
 }
 
 void Missile::draw(glm::mat4 VP) {

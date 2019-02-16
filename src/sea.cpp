@@ -1,7 +1,7 @@
 #include "sea.h"
 #include "main.h"
 
-Sea::Sea(float x, float y, float z, color_t color) {
+Sea::Sea(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -15,7 +15,7 @@ Sea::Sea(float x, float y, float z, color_t color) {
         -world_width, 0, world_breadth,
     };
 
-    this->object = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data, color, GL_FILL);
+    this->object = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data, COLOR_BLUE, GL_FILL);
 }
 
 void Sea::draw(glm::mat4 VP) {

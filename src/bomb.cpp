@@ -1,7 +1,7 @@
 #include "bomb.h"
 #include "main.h"
 
-Bomb::Bomb(float x, float y, float z, color_t color) {
+Bomb::Bomb(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     this->speed = -500;
     this->accl = -10;
@@ -47,7 +47,7 @@ Bomb::Bomb(float x, float y, float z, color_t color) {
         10.0f,-10.0f, 10.0f
     };
     this->box.width = this->box.height = this->box.breadth = 10;
-    this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
+    this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, COLOR_BLACK, GL_FILL);
 }
 
 void Bomb::draw(glm::mat4 VP) {

@@ -7,7 +7,7 @@
 class Marker {
 public:
     Marker() {}
-    Marker(float x, float y, float z, color_t color);
+    Marker(float x, float y, float z);
     glm::vec3 position;
     float rotation;
     void draw(glm::mat4 VP, glm::vec3);

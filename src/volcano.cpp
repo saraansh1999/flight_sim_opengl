@@ -1,7 +1,7 @@
 #include "volcano.h"
 #include "main.h"
 
-Volcano::Volcano(float x, float y, float z, color_t color) {
+Volcano::Volcano(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     int N = 25;
     this->box.height = 500;
@@ -35,7 +35,7 @@ Volcano::Volcano(float x, float y, float z, color_t color) {
 
 
 
-    this->object = create3DObject(GL_TRIANGLES, N*3, vertex_buffer_data, color, GL_FILL);
+    this->object = create3DObject(GL_TRIANGLES, N*3, vertex_buffer_data, COLOR_MID_RED, GL_FILL);
 }
 
 void Volcano::draw(glm::mat4 VP) {

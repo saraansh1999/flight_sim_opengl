@@ -7,7 +7,7 @@
 class Crosshair {
 public:
     Crosshair() {}
-    Crosshair(float x, float y, float z, color_t color);
+    Crosshair(float x, float y, float z);
     glm::vec3 position;
     float rotation;
     void draw(glm::mat4 VP);

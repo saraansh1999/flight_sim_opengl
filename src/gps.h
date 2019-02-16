@@ -7,7 +7,7 @@
 class Gps {
 public:
     Gps() {}
-    Gps(float x, float y, float z, color_t color);
+    Gps(float x, float y, float z);
     glm::vec3 position;
     float rotation;
     void draw(glm::mat4 VP, float, glm::vec3, glm::vec3);

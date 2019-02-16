@@ -1,7 +1,7 @@
 #include "alt_indicator.h"
 #include "main.h"
 
-Alt_ind::Alt_ind(float x, float y, float z, color_t color) {
+Alt_ind::Alt_ind(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     //this->rotation = 0;
     this->radius = 75;
@@ -34,8 +34,8 @@ Alt_ind::Alt_ind(float x, float y, float z, color_t color) {
     vertex_buffer_data_stick[7] = this->radius;
     vertex_buffer_data_stick[8] = 0.0f;
 
-    this->object_ring = create3DObject(GL_LINES, 2*N, vertex_buffer_data_ring, color, GL_FILL);
-    this->object_stick = create3DObject(GL_TRIANGLES, 3, vertex_buffer_data_stick, color, GL_FILL);
+    this->object_ring = create3DObject(GL_LINES, 2*N, vertex_buffer_data_ring, COLOR_PITCH_BLACK, GL_FILL);
+    this->object_stick = create3DObject(GL_TRIANGLES, 3, vertex_buffer_data_stick, COLOR_RED, GL_FILL);
 }
 
 void Alt_ind::draw(glm::mat4 VP, float alt) {

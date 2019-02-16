@@ -1,7 +1,7 @@
 #include "marker.h"
 #include "main.h"
 
-Marker::Marker(float x, float y, float z, color_t color) {
+Marker::Marker(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     int N = 25;
     float length = 100;
@@ -30,7 +30,7 @@ Marker::Marker(float x, float y, float z, color_t color) {
         vertex_buffer_data[9*i + 8] = zval;
     }
 
-    this->object = create3DObject(GL_TRIANGLES, N*3, vertex_buffer_data, color, GL_FILL);
+    this->object = create3DObject(GL_TRIANGLES, N*3, vertex_buffer_data, COLOR_RED, GL_FILL);
 }
 
 void Marker::draw(glm::mat4 VP, glm::vec3 plane) {

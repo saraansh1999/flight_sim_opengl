@@ -313,10 +313,10 @@ void tick_input(GLFWwindow *window) {
     }
 
     if(left == GLFW_PRESS && missile_timer.processTick()){
-        missiles.push_back(Missile(plane.front.x, plane.front.y, plane.front.z, plane.front - plane.back, 50, COLOR_BLACK));
+        missiles.push_back(Missile(plane.front.x, plane.front.y, plane.front.z, plane.front - plane.back, 50));
     }
     if(right == GLFW_PRESS && bomb_timer.processTick()){
-        bombs.push_back(Bomb(plane.position.x, plane.position.y - plane.box.height/2, plane.position.z, COLOR_BLACK));
+        bombs.push_back(Bomb(plane.position.x, plane.position.y - plane.box.height/2, plane.position.z));
     }
 }
 
@@ -491,20 +491,20 @@ void initGL(GLFWwindow *window, int width, int height) {
     // ball1       = Ball(0, 0, COLOR_RED);
     for(int i=0;i<no_grounds;i++)
     {
-        grounds.insert(make_pair(i, Ground(-world_width/30000 + rand()%(int)(2*world_width/30000), -1749, -world_breadth/30000 + rand()%(int)(2*world_breadth/30000), COLOR_GREEN)));
+        grounds.insert(make_pair(i, Ground(-world_width/30000 + rand()%(int)(2*world_width/30000), -1749, -world_breadth/30000 + rand()%(int)(2*world_breadth/30000))));
     }
     checkpoint = grounds.begin();
     for(int i=0;i<no_volcanoes;i++)
     {
-        volcanoes.push_back(Volcano(-world_width/30000 + rand()%(int)(2*world_width/30000), -1749, -world_breadth/30000 + rand()%(int)(2*world_breadth/30000), COLOR_RED));
+        volcanoes.push_back(Volcano(-world_width/30000 + rand()%(int)(2*world_width/30000), -1749, -world_breadth/30000 + rand()%(int)(2*world_breadth/30000)));
     }
     for(int i=0;i<no_fuel_ups;i++)
     {
-        fuel_ups.insert(make_pair(i, Fuel_up(-world_width/30000 + rand()%(int)(2*world_width/30000), rand()%1000, -world_breadth/30000 + rand()%(int)(2*world_breadth/30000), COLOR_BLACK)));
+        fuel_ups.insert(make_pair(i, Fuel_up(-world_width/30000 + rand()%(int)(2*world_width/30000), rand()%1000, -world_breadth/30000 + rand()%(int)(2*world_breadth/30000))));
     }
     for(int i=0;i<no_rings;i++)
     {
-        rings.insert(make_pair(i, Ring(-world_width/30000 + rand()%(int)(2*world_width/30000), rand()%1000, -world_breadth/30000 + rand()%(int)(2*world_breadth/30000), COLOR_BLACK)));
+        rings.insert(make_pair(i, Ring(-world_width/30000 + rand()%(int)(2*world_width/30000), rand()%1000, -world_breadth/30000 + rand()%(int)(2*world_breadth/30000))));
     }
     for(int i=0;i<3;i++)
     {
@@ -516,18 +516,18 @@ void initGL(GLFWwindow *window, int width, int height) {
         points[i] = Segment(0, 0, 0);
         points[i].set_position(150 - (6-i)*1.1*lives[i].box.width, -350, -1000);
     }
-    plane = Plane(0, 0, 0, COLOR_RED);
-    sea = Sea(0.0f, -2000.0f, 0.0f, COLOR_BLUE);
-    speed_ind = Speed_ind(0, 0, 0, COLOR_RED);
+    plane = Plane(0, 0, 0);
+    sea = Sea(0.0f, -2000.0f, 0.0f);
+    speed_ind = Speed_ind(0, 0, 0);
     speed_ind.set_position(-250, -350, -1000);
-    alt_ind = Alt_ind(0, 0, 0, COLOR_RED);
+    alt_ind = Alt_ind(0, 0, 0);
     alt_ind.set_position(250, -350, -1000);
-    fuel_ind = Fuel_ind(0, 0, 0, COLOR_RED);
+    fuel_ind = Fuel_ind(0, 0, 0);
     fuel_ind.set_position(250, 300, -1000);
-    gps = Gps(0, 0, 0, COLOR_RED);
+    gps = Gps(0, 0, 0);
     gps.set_position(-250, 300, -1000);
-    marker = Marker(0, 0, 0, COLOR_RED);
-    crosshair = Crosshair(0, 0, 0, COLOR_RED);
+    marker = Marker(0, 0, 0);
+    crosshair = Crosshair(0, 0, 0);
     detector = Collisions_detector();
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");

@@ -2,7 +2,7 @@
 #include "plane.h"
 
 
-Plane::Plane(float x, float y, float z, color_t color){
+Plane::Plane(float x, float y, float z){
     this->position = glm::vec3(x, y, z);
     this->lives = 10;
     this->points = 0;
@@ -119,7 +119,7 @@ Plane::Plane(float x, float y, float z, color_t color){
     vertex_buffer_data[27*N + 18 - 1 + 8] = this->position.y + this->radius + this->radius*3;
     vertex_buffer_data[27*N + 18 - 1 + 9] = this->position.z + this->length/2;
 
-    this->object = create3DObject(GL_TRIANGLES, N*6 + 3*3 + N*3, vertex_buffer_data, color, GL_FILL);
+    this->object = create3DObject(GL_TRIANGLES, N*6 + 3*3 + N*3, vertex_buffer_data, COLOR_ORANGE, GL_FILL);
     this->box.width = 2*radius;
     this->box.height = 2*radius;
     this->box.breadth = this->length;

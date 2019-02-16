@@ -7,7 +7,7 @@
 class Speed_ind {
 public:
     Speed_ind() {}
-    Speed_ind(float x, float y, float z, color_t color);
+    Speed_ind(float x, float y, float z);
     glm::vec3 position;
     float rotation;
     void draw(glm::mat4 VP, float);

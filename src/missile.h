@@ -8,7 +8,7 @@
 class Missile {
 public:
     Missile() {}
-    Missile(float x, float y, float z, glm::vec3 dir, float speed, color_t color);
+    Missile(float x, float y, float z, glm::vec3 dir, float speed);
     glm::vec3 position;
     glm::mat4 rotation;
     void draw(glm::mat4 VP);

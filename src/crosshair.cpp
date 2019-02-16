@@ -1,7 +1,7 @@
 #include "crosshair.h"
 #include "main.h"
 
-Crosshair::Crosshair(float x, float y, float z, color_t color) {
+Crosshair::Crosshair(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -35,7 +35,7 @@ Crosshair::Crosshair(float x, float y, float z, color_t color) {
         -7, 1, 0,
     };
 
-    this->object = create3DObject(GL_TRIANGLES, 2*3*4, vertex_buffer_data, color, GL_FILL);
+    this->object = create3DObject(GL_TRIANGLES, 2*3*4, vertex_buffer_data, COLOR_MID_RED, GL_FILL);
 }
 
 void Crosshair::draw(glm::mat4 VP) {

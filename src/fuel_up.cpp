@@ -1,7 +1,7 @@
 #include "fuel_up.h"
 #include "main.h"
 
-Fuel_up::Fuel_up(float x, float y, float z, color_t color) {
+Fuel_up::Fuel_up(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -49,7 +49,7 @@ Fuel_up::Fuel_up(float x, float y, float z, color_t color) {
         -50, 50, 5,
     };
 
-    this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
+    this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, COLOR_DARK_YELLOW, GL_FILL);
     this->box.pos = glm::vec3(x, y, z);
     this->box.width = 100;
     this->box.height = 100;

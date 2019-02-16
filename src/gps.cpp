@@ -11,7 +11,7 @@ float angle_between(glm::vec3 v1, glm::vec3 v2)
 
 }
 
-Gps::Gps(float x, float y, float z, color_t color) {
+Gps::Gps(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     //this->rotation = 0;
     this->radius = 75;
@@ -55,9 +55,9 @@ Gps::Gps(float x, float y, float z, color_t color) {
     vertex_buffer_data_stick_checkpoint[7] = this->radius;
     vertex_buffer_data_stick_checkpoint[8] = 0.0f;
 
-    this->object_ring = create3DObject(GL_LINES, 2*N, vertex_buffer_data_ring, color, GL_FILL);
-    this->object_stick_north = create3DObject(GL_TRIANGLES, 3, vertex_buffer_data_stick_north, color, GL_FILL);
-    this->object_stick_checkpoint = create3DObject(GL_TRIANGLES, 3, vertex_buffer_data_stick_checkpoint, COLOR_BLACK, GL_FILL);
+    this->object_ring = create3DObject(GL_LINES, 2*N, vertex_buffer_data_ring, COLOR_PITCH_BLACK, GL_FILL);
+    this->object_stick_north = create3DObject(GL_TRIANGLES, 3, vertex_buffer_data_stick_north, COLOR_RED, GL_FILL);
+    this->object_stick_checkpoint = create3DObject(GL_TRIANGLES, 3, vertex_buffer_data_stick_checkpoint, COLOR_PITCH_BLACK, GL_FILL);
 }
 
 void Gps::draw(glm::mat4 VP, float north, glm::vec3 v1, glm::vec3 v2) {

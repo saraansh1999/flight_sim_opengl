@@ -7,7 +7,7 @@
 class Fuel_ind {
 public:
     Fuel_ind() {}
-    Fuel_ind(float x, float y, float z, color_t color);
+    Fuel_ind(float x, float y, float z);
     glm::vec3 position;
     float rotation;
     void draw(glm::mat4 VP, float);

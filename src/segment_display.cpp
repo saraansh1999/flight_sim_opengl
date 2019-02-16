@@ -84,13 +84,13 @@ Segment::Segment(float x, float y, float z) {
         10, 5, 0,
     };
 
-    this->object[0] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data0, COLOR_BLACK, GL_FILL);
-    this->object[1] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data1, COLOR_BLACK, GL_FILL);
-    this->object[2] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data2, COLOR_BLACK, GL_FILL);
-    this->object[3] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data3, COLOR_BLACK, GL_FILL);
-    this->object[4] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data4, COLOR_BLACK, GL_FILL);
-    this->object[5] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data5, COLOR_BLACK, GL_FILL);
-    this->object[6] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data6, COLOR_BLACK, GL_FILL);
+    this->object[0] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data0, COLOR_PITCH_BLACK, GL_FILL);
+    this->object[1] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data1, COLOR_PITCH_BLACK, GL_FILL);
+    this->object[2] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data2, COLOR_PITCH_BLACK, GL_FILL);
+    this->object[3] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data3, COLOR_PITCH_BLACK, GL_FILL);
+    this->object[4] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data4, COLOR_PITCH_BLACK, GL_FILL);
+    this->object[5] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data5, COLOR_PITCH_BLACK, GL_FILL);
+    this->object[6] = create3DObject(GL_TRIANGLES, 2*3, vertex_buffer_data6, COLOR_PITCH_BLACK, GL_FILL);
     this->box.width = 20*2;
     this->box.height = 20*2*2;
 }
