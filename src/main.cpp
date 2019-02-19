@@ -51,10 +51,10 @@ map<int ,Ring> rings;
 Segment lives[3];
 Segment points[6];
 
-int no_fuel_ups = 500;
+int no_fuel_ups = 100;
 int no_grounds = 100;
 int no_volcanoes = 20;
-int no_rings = 500;
+int no_rings = 100;
 float heli_speed = 10000;
 float world_breadth = 1000000000, world_height = 1000000000, world_width = 1000000000;
 float xscaler, yscaler, zscaler;
@@ -451,7 +451,7 @@ void tick_elements() {
     {
         int no = rand()%21;
         for(int i=0;i<no;i++)
-            parachutes.push_back(Parachute(-world_width/10000 + rand()%(int)(2*world_width/10000), 2000.0f, -world_breadth/10000 + rand()%(int)(2*world_breadth/10000)));
+            parachutes.push_back(Parachute(-world_width/30000 + rand()%(int)(2*world_width/30000), 2000.0f, -world_breadth/30000 + rand()%(int)(2*world_breadth/30000)));
     }
     for(int i=0;i<parachutes.size();)
     {
