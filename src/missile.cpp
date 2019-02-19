@@ -73,7 +73,7 @@ Missile::Missile(float x, float y, float z, glm::vec3 dir, float speed) {
     this->rotation = glm::rotate((float)(acos(glm::dot(glm::vec3(0, 0, 1), glm::normalize(this->direction)))), glm::cross(glm::vec3(0, 0, 1), this->direction));
     this->box.width = this->box.height = 2*radius;
     this->box.breadth = this->length;
-    this->object = create3DObject(GL_TRIANGLES, 6*N + 3*N, vertex_buffer_data, COLOR_BLACK, GL_FILL);
+    this->object = create3DObject(GL_TRIANGLES, 6*N + 3*N, vertex_buffer_data, COLOR_SKIN, GL_FILL);
 }
 
 void Missile::draw(glm::mat4 VP) {

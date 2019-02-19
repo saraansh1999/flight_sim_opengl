@@ -14,4 +14,5 @@ const color_t COLOR_DARK_YELLOW = { 153, 153, 0 };
 const color_t COLOR_DARK_GREEN = { 0, 102, 0 };
 const color_t COLOR_BACKGROUND = { 242, 241, 239 };
 const color_t COLOR_WHITE = {255, 255, 255}; 
-const color_t COLOR_LIGHT_PURPLE = {200, 150, 255}; 
+const color_t COLOR_BROWN = {69, 40, 17}; 
+const color_t COLOR_SKIN = {246, 209, 123};

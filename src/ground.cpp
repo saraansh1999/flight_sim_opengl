@@ -97,7 +97,7 @@ Ground::Ground(float x, float y, float z) {
     this->box.height = 500;
     this->box.pos = position;
     this->object_ground = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data1, COLOR_GREEN, GL_FILL);
-    this->object_shooter = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data2, COLOR_LIGHT_PURPLE, GL_FILL);
+    this->object_shooter = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data2, COLOR_BROWN, GL_FILL);
 }
 
 void Ground::draw(glm::mat4 VP) {

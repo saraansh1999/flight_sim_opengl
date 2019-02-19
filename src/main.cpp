@@ -313,7 +313,7 @@ void tick_input(GLFWwindow *window) {
     }
 
     if(left == GLFW_PRESS && missile_timer.processTick()){
-        missiles.push_back(Missile(plane.front.x, plane.front.y, plane.front.z, plane.front - plane.back, 50));
+        missiles.push_back(Missile(plane.front.x, plane.front.y, plane.front.z, plane.front - plane.back, 30));
     }
     if(right == GLFW_PRESS && bomb_timer.processTick()){
         bombs.push_back(Bomb(plane.position.x, plane.position.y - plane.box.height/2, plane.position.z));
@@ -338,7 +338,7 @@ void tick_elements() {
     }
     plane.tick();
     sea.tick();
-    crosshair.tick(plane.front + glm::normalize(plane.front - plane.back)*200.0f, plane.angle_y, plane.angle_z);
+    crosshair.tick(plane.front + glm::normalize(plane.front - plane.back)*400.0f, plane.angle_y, plane.angle_z);
     marker.set_position(checkpoint->second.position.x, checkpoint->second.box.height/2 + checkpoint->second.position.y, checkpoint->second.position.z);
     for(map<int, Ground>::iterator i=grounds.begin(), next=i; i!=grounds.end(); i=next)
     {
@@ -469,6 +469,8 @@ void tick_elements() {
                 if(detector.cuboid_cylinder_collision(parachutes[i].box, missiles[j].box))
                 {
                     plane.points += 20;
+                    if(plane.lives<10)
+                        plane.lives++;
                     missiles.erase(missiles.begin() + j);
                     parachutes.erase(parachutes.begin() + i);
                     flag++;
