@@ -46,9 +46,12 @@ void Alt_ind::draw(glm::mat4 VP, float alt) {
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
     draw3DObject(this->object_ring);
 
+    float angle = alt*90/2000;
     Matrices.model = glm::mat4(1.0f);
     translate = glm::translate (this->position);
-    glm::mat4 rotate = glm::rotate(-glm::radians(alt*90/2000), glm::vec3(0, 0, 1));
+    if(angle > 90)
+        angle = 90;
+    glm::mat4 rotate = glm::rotate(-glm::radians(angle), glm::vec3(0, 0, 1));
     Matrices.model *= (translate*rotate);
     MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
