@@ -3,10 +3,16 @@ Graphics Assignment 2
 This is a basic flight simulator kind of game in which the player controls a Fighter Jet and has checkpoints as missions to complete.
 
 To Run:
-1. Go to 'graphics-boilerplate-master/build'.
-2. Run 'cmake ..'.
-3. Run 'make all'.
-4. Run './graphics_asgn1'.
+- sudo apt-get update
+- sudo apt-get install libglfw3
+- sudo apt-get install libglfw3-dev
+- sudo apt-get install libglew
+- sudo apt-get install libglew-dev
+- sudo apt-get install libglm-dev
+- Go to 'graphics-boilerplate-master/build'.
+- Run 'cmake ..'.
+- Run 'make all'.
+- Run './graphics_asgn1'.
 
 How To Play:
 1. Control the altitude of the plane using Spacebar for 'UP' and 'LeftAlt' for 'DOWN'.
